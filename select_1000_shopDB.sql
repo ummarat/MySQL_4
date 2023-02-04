@@ -1,10 +1,16 @@
 SELECT
-	(SELECT customers.LName FROM customers WHERE orders.CustomerNo = customers.CustomerNo) AS CustLName, 
-	(SELECT customers.FName FROM customers WHERE orders.CustomerNo = customers.CustomerNo) AS CustFName,
-	(SELECT customers.MName FROM customers WHERE orders.CustomerNo = customers.CustomerNo) AS CustMName,
-	(SELECT employees.LName FROM employees WHERE orders.EmployeeID = employees.EmployeeID) AS EmpLName, 
-	(SELECT employees.FName FROM employees WHERE orders.EmployeeID = employees.EmployeeID) AS EmpFName,
-	(SELECT employees.MName FROM employees WHERE orders.EmployeeID = employees.EmployeeID) AS EmpMName
+	customers.LName AS CustLName, 
+	customers.FName AS CustFName,
+	customers.MName AS CustMName,
+	employees.LName AS EmpLName, 
+	employees.FName AS EmpFName,
+	employees.MName AS EmpMName
 FROM orders
-WHERE orders.OrderID IN (SELECT orderdetails.OrderID FROM orderdetails WHERE orderdetails.TotalPrice>1000)
+INNER JOIN customers
+ON orders.CustomerNo = customers.CustomerNo
+INNER JOIN employees
+ON orders.EmployeeID = employees.EmployeeID
+INNER JOIN orderdetails
+ON orders.OrderID = orderdetails.OrderID
+WHERE TotalPrice>1000
 GROUP BY CustLName, CustFName, CustMName, EmpLName, EmpFName, EmpMName;
